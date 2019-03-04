@@ -65,7 +65,7 @@ class App extends Component {
     this.loadCurrentUser();
   }
 
-  handleLogout(redirectTo = "/", notificationType = "success", description = "You're successfully logged out.") {
+  handleLogout(redirectTo = "/login", notificationType = "success", description = "You're successfully logged out.") {
     localStorage.removeItem(ACCESS_TOKEN);
 
     this.setState({
@@ -76,14 +76,14 @@ class App extends Component {
     this.props.history.push(redirectTo);
 
     notification[notificationType]({
-      message: 'Polling App',
+      message: 'NMS Dashboard',
       description: description,
     });
   }
 
   handleLogin() {
     notification.success({
-      message: 'Polling App',
+      message: 'NMS Dashboard',
       description: "You're successfully logged in.",
     });
     this.loadCurrentUser();

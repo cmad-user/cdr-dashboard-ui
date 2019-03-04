@@ -1,4 +1,6 @@
 import React from 'react';
+import { ACCESS_TOKEN } from '../constants';
+
 import {
     Route,
     Redirect
@@ -9,7 +11,7 @@ const PrivateRoute = ({ component: Component, authenticated, ...rest }) => (
     <Route
       {...rest}
       render={props =>
-        authenticated ? (
+        localStorage.getItem(ACCESS_TOKEN) ? (
           <Component {...rest} {...props} />
         ) : (
           <Redirect
