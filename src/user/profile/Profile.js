@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import PollList from '../../poll/PollList';
+// import PollList from '../../poll/PollList';
 import { getUserProfile } from '../../util/APIUtils';
 import { Avatar, Tabs } from 'antd';
 import { getAvatarColor } from '../../util/Colors';
@@ -95,7 +95,7 @@ class Profile extends Component {
                                 </div>
                             </div>
                             <div className="user-poll-details">    
-                                <Tabs defaultActiveKey="1" 
+                                {/* <Tabs defaultActiveKey="1" 
                                     animated={false}
                                     tabBarStyle={tabBarStyle}
                                     size="large"
@@ -106,7 +106,7 @@ class Profile extends Component {
                                     <TabPane tab={`${this.state.user.voteCount} Votes`}  key="2">
                                         <PollList username={this.props.match.params.username} type="USER_VOTED_POLLS" />
                                     </TabPane>
-                                </Tabs>
+                                </Tabs> */}
                             </div>  
                         </div>  
                     ): null               

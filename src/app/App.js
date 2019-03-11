@@ -1,28 +1,19 @@
 import React, { Component } from 'react';
 import './App.css';
-import {
-  Redirect,
-  Route,
-  withRouter,
-  Switch
-} from 'react-router-dom';
+import { Redirect, Route, withRouter, Switch } from 'react-router-dom';
 
 import { getCurrentUser } from '../util/APIUtils';
 import { ACCESS_TOKEN } from '../constants';
 
-import PollList from '../poll/PollList';
-import NewPoll from '../poll/NewPoll';
 import Login from '../user/login/Login';
 import Signup from '../user/signup/Signup';
 import Profile from '../user/profile/Profile';
-import AppHeader from '../common/AppHeader';
 import NotFound from '../common/NotFound';
 import LoadingIndicator from '../common/LoadingIndicator';
 import PrivateRoute from '../common/PrivateRoute';
 import Dashboard from '../dashboard/Dashboard';
 
 import { Layout, notification } from 'antd';
-const { Content } = Layout;
 
 class App extends Component {
   constructor(props) {
@@ -100,10 +91,8 @@ class App extends Component {
               <Route path="/login"
                 render={(props) => <Login onLogin={this.handleLogin} {...props} />}></Route>
               <Route path="/signup" component={Signup}></Route>
-              <PrivateRoute authenticated={this.state.isAuthenticated} path="/dashboard" component={Dashboard} isAuthenticated={this.state.isAuthenticated}
-                  currentUser={this.state.currentUser} onLogout={this.handleLogout} />
-              <Route path="/users/:username"
-                render={(props) => <Profile isAuthenticated={this.state.isAuthenticated} currentUser={this.state.currentUser} {...props} />}>
+              <PrivateRoute path="/dashboard" component={Dashboard} currentUser={this.state.currentUser} onLogout={this.handleLogout} />
+              <Route path="/users/:username" render={(props) => <Profile currentUser={this.state.currentUser} {...props} />}>
               </Route>
               <Route component={NotFound}></Route>
             </Switch>

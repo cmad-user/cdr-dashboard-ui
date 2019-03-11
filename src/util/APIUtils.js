@@ -1,4 +1,5 @@
-import { API_BASE_URL, POLL_LIST_SIZE, ACCESS_TOKEN } from '../constants';
+import { API_BASE_URL, ACCESS_TOKEN } from '../constants';
+import store from '../stores/store.js';
 
 const request = (options) => {
     const headers = new Headers({
@@ -22,12 +23,32 @@ function handleResponse(response) {
             if (response.status === 401) {
                 // auto logout if 401 response returned from api
                 logout();
+                window.location.reload();
                // location.reload(true);
             }
             return Promise.reject(json);
         }
         return json;
     });
+}
+
+export function fetchMessageCount() {
+    request({
+        url: API_BASE_URL+"/messages/count",
+        method: 'GET',
+    }).then(function(messagecount){
+        store.dispatch({
+            type: 'messagecount',
+            messagecount: messagecount
+        });
+    });
+};
+
+export function fetchMessages(reqURL){
+    return request({
+        url: API_BASE_URL+reqURL,
+        method: 'GET',
+    })
 }
 
 export function login(loginRequest) {

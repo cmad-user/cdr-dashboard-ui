@@ -1,29 +1,55 @@
 import React, { Component } from 'react';
 import { Layout, Menu, Icon, Dropdown } from 'antd';
-import AppHeader from '../common/AppHeader';
 import '../asset/css/custom.css';
 import "antd/dist/antd.css";
-import {
-    Link,
-    withRouter
-} from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import CountCard from '../dashboard/CountCard';
+import MessageInfiniteScroll from '../dashboard/MessageInfiniteScroll';
+import { Col, Row } from 'antd';
+import store from "../stores/store.js";
+import { fetchMessageCount } from "../util/APIUtils.js";
+import IntervalSelector from '../dashboard/IntervalSelector';
 
 const { Header, Sider, Content } = Layout;
 
 class Dashboard extends React.Component {
-    state = {
-        collapsed: false,
-    };
+
+    constructor(props) {
+        super(props);
+        this.defaultInterval = "10000";
+
+        store.subscribe(() => {
+            this.forceUpdate();
+        });
+
+        fetchMessageCount();
+        this.state = {
+            refreshinterval: this.defaultInterval,
+            collapsed: false,
+            
+        };
+        this.updateInterval = (newInterval) => {
+            // Clearing previous interval
+            clearInterval(this.interval);
+            if(newInterval > 0) this.interval = setInterval(() => fetchMessageCount(), newInterval);
+            this.setState({
+                refreshinterval: newInterval
+            })
+        }
+        this.handleMenuClick = this.handleMenuClick.bind(this);
+    }
+
+    componentDidMount() {
+        this.interval = setInterval(() => fetchMessageCount(), this.state.refreshinterval);
+    }
+    componentWillUnmount() {
+        clearInterval(this.interval);
+    }
 
     toggle = () => {
         this.setState({
             collapsed: !this.state.collapsed,
         });
-    }
-
-    constructor(props) {
-        super(props);
-        this.handleMenuClick = this.handleMenuClick.bind(this);
     }
 
     handleMenuClick({ key }) {
@@ -32,10 +58,30 @@ class Dashboard extends React.Component {
         }
     }
 
+
+    getMessageCount() {
+        var notificationCount = "0", errorCount = "0", warningCount = "0";
+        var messagecount = store.getState().messagecount;
+
+        messagecount.map(function (row) {
+            if (row.messageType === 'Notification') {
+                notificationCount = row.count;
+            } else if (row.messageType === 'Error') {
+                errorCount = row.count;
+            } else if (row.messageType === 'Warning') {
+                warningCount = row.count;
+            }
+        })
+
+        const data = {Notification: notificationCount,  Error: errorCount,Warning: warningCount }
+
+        return data;
+    }
+
     render() {
 
-
         let menuItems;
+
         if (this.props.currentUser) {
             menuItems = [
                 <Menu.Item key="/">
@@ -60,6 +106,7 @@ class Dashboard extends React.Component {
             ];
         }
 
+        var data =  this.getMessageCount();
 
         return (
             <Layout>
@@ -96,16 +143,29 @@ class Dashboard extends React.Component {
                             className="app-menu"
                             mode="horizontal"
                             selectedKeys={[this.props.location.pathname]}
-                            style={{ lineHeight: '64px' }} >
+                            style={{ lineHeight: '64px', float: 'right' }} >
                             {menuItems}
                         </Menu>
+                        <IntervalSelector updateInterval={this.updateInterval} defaultInterval={this.state.refreshinterval} />
                     </Header>
                     <Content style={{
                         margin: '24px 16px', padding: 24, background: '#fff',
                     }}
                     >
-                        Content
+                        <Row gutter={8}>
+                            <Col span={8}>
+                                <CountCard icon="bell" count={data.Notification} bgcolor='#52c41a' />
+                            </Col>
+                            <Col span={8}>
+                                <CountCard icon="warning" count={data.Warning} bgcolor='#faad14'/>
+                            </Col>
+                            <Col span={8}>
+                                <CountCard icon="exclamation-circle" count={data.Error} bgcolor='#f5222d'/>
+                            </Col>
+                        </Row>
+                        <MessageInfiniteScroll refreshinterval={this.state.refreshinterval} />
                     </Content>
+                    {/* <Footer>Footer</Footer> */}
                 </Layout>
             </Layout>
         );
