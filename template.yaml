@@ -1,13 +1,16 @@
-service: nms-dashboard-ui
-
-provider:
-  name: aws
-  runtime: nodejs8.10
-
-functions:
-  hello:
-    handler: index.handler
-    events:
-     - http:
-         path: login
-         method: get
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Outputs the time
+Resources:
+  TimeFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs8.10
+      CodeUri: ./
+      Events:
+        AnyRequest:
+          Type: Api
+          Properties:
+            Path: /
+            Method: ANY
