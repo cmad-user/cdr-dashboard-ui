@@ -1,12 +1,30 @@
 version: 0.2
+
 phases:
-  install:
+  pre_build:
     commands:
-      - npm install time
-      - export BUCKET=cb-492067
-      - aws cloudformation package --template-file template.yaml --s3-bucket $BUCKET --output-template-file outputtemplate.yaml
+      - echo Logging in to Amazon ECR...
+      - $(aws ecr get-login --no-include-email --region us-west-2)
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building the Docker image...          
+      - docker build -t nms-dashboard-ui:latest .
+      - docker tag nms-dashboard-ui:latest 860360332628.dkr.ecr.us-west-2.amazonaws.com/nms-dashboard-ui:latest      
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker image...
+      - docker push 860360332628.dkr.ecr.us-west-2.amazonaws.com/nms-dashboard-ui:latest
+      - mkdir appfiles
+      - cd appfiles
+      - cp ../appspec.yml .
+      - cp ../scripts/kill_container.sh .
+      - cp ../scripts/start_container.sh .
 artifacts:
-  type: zip
   files:
-    - template.yaml
-    - outputtemplate.yaml
+    - appfiles/kill_container.sh
+    - appfiles/appspec.yml
+    - appfiles/start_container.sh
+  discard-paths: yes
+    
