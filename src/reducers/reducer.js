@@ -1,10 +1,10 @@
 function reducer(state={
-        messagecount: []
+    cdrcount: []
     }, action){
     switch(action.type){
-        case 'messagecount':
+        case 'cdrcount':
             return {
-                messagecount: action.messagecount
+                cdrcount: action.cdrcount
             }
         default: 
             return state;

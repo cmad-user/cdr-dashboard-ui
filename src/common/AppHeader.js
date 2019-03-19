@@ -68,7 +68,7 @@ class AppHeader extends Component {
           />
             <div className="container">
               {/* <div className="app-title" >
-                <Link to="/">NMS Dashboard</Link>
+                <Link to="/">CDR Dashboard</Link>
               </div> */}
               <Menu
                 className="app-menu"

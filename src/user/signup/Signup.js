@@ -61,13 +61,13 @@ class Signup extends Component {
         signup(signupRequest)
         .then(response => {
             notification.success({
-                message: 'NMS Dashboard',
+                message: 'CDR Dashboard',
                 description: "Thank you! You're successfully registered. Please Login to continue!",
             });          
             this.props.history.push("/login");
         }).catch(error => {
             notification.error({
-                message: 'NMS Dashboard',
+                message: 'CDR Dashboard',
                 description: error.message || 'Sorry! Something went wrong. Please try again!'
             });
         });

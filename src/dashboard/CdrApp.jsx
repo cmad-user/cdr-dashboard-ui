@@ -1,21 +1,21 @@
 import React from "react";
 import IntervalSelector from "./IntervalSelector.jsx";
-import MessageCountTable from "./MessageCountTable.jsx";
-import MessageInfiniteScroll from "./MessageInfiniteScroll.jsx";
-import fetchMessageCount from "../rest/ajax.js"; 
+import CdrCountTable from "./CdrCountTable.jsx";
+import CdrInfiniteScroll from "./CdrInfiniteScroll.jsx";
+import fetchCdrCount from "../rest/ajax.js"; 
 
-class MessageApp extends React.Component {
+class CdrApp extends React.Component {
     constructor(props) {
         super(props);
         this.defaultInterval = 10000;
-        fetchMessageCount();
+        fetchCdrCount();
         this.state = {
             refreshinterval: this.defaultInterval
         };
         this.updateInterval = (newInterval) => {
             // Clearing previous interval
             clearInterval(this.interval);
-            if(newInterval > 0) this.interval = setInterval(() => fetchMessageCount(), newInterval);
+            if(newInterval > 0) this.interval = setInterval(() => fetchCdrCount(), newInterval);
             this.setState({
                 refreshinterval: newInterval
             })
@@ -23,7 +23,7 @@ class MessageApp extends React.Component {
     }
 
     componentDidMount() {
-        this.interval = setInterval(() => fetchMessageCount(), this.state.refreshinterval);
+        this.interval = setInterval(() => fetchCdrCount(), this.state.refreshinterval);
     }
     componentWillUnmount() {
         clearInterval(this.interval);
@@ -34,13 +34,13 @@ class MessageApp extends React.Component {
             <div>
                 <IntervalSelector updateInterval={this.updateInterval} defaultInterval={this.defaultInterval}></IntervalSelector>
                 <br/>
-                <MessageCountTable></MessageCountTable>
+                <CdrCountTable></CdrCountTable>
                 <br/>
                 <br/>
-                <MessageInfiniteScroll refreshinterval={this.state.refreshinterval} ></MessageInfiniteScroll>
+                <CdrInfiniteScroll refreshinterval={this.state.refreshinterval} ></CdrInfiniteScroll>
             </div>
         );
     }
 }
 
-export default MessageApp;
+export default CdrApp;

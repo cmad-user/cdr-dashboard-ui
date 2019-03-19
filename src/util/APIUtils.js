@@ -32,19 +32,19 @@ function handleResponse(response) {
     });
 }
 
-export function fetchMessageCount() {
+export function fetchCdrCount() {
     request({
-        url: API_BASE_URL+"/messages/count",
+        url: API_BASE_URL+"/cdrs/count",
         method: 'GET',
-    }).then(function(messagecount){
+    }).then(function(cdrcount){
         store.dispatch({
-            type: 'messagecount',
-            messagecount: messagecount
+            type: 'cdrcount',
+            cdrcount: cdrcount
         });
     });
 };
 
-export function fetchMessages(reqURL){
+export function fetchCdrs(reqURL){
     return request({
         url: API_BASE_URL+reqURL,
         method: 'GET',

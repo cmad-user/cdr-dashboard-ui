@@ -67,14 +67,14 @@ class App extends Component {
     this.props.history.push(redirectTo);
 
     notification[notificationType]({
-      message: 'NMS Dashboard',
+      message: 'CDR Dashboard',
       description: description,
     });
   }
 
   handleLogin() {
     notification.success({
-      message: 'NMS Dashboard',
+      message: 'CDR Dashboard',
       description: "You're successfully logged in.",
     });
     this.loadCurrentUser();

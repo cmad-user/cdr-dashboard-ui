@@ -4,10 +4,10 @@ import '../asset/css/custom.css';
 import "antd/dist/antd.css";
 import { Link } from 'react-router-dom';
 import CountCard from '../dashboard/CountCard';
-import MessageInfiniteScroll from '../dashboard/MessageInfiniteScroll';
+import CdrInfiniteScroll from './CdrInfiniteScroll';
 import { Col, Row } from 'antd';
 import store from "../stores/store.js";
-import { fetchMessageCount } from "../util/APIUtils.js";
+import { fetchCdrCount } from "../util/APIUtils.js";
 import IntervalSelector from '../dashboard/IntervalSelector';
 
 const { Header, Sider, Content } = Layout;
@@ -22,7 +22,7 @@ class Dashboard extends React.Component {
             this.forceUpdate();
         });
 
-        fetchMessageCount();
+        fetchCdrCount();
         this.state = {
             refreshinterval: this.defaultInterval,
             collapsed: false,
@@ -31,7 +31,7 @@ class Dashboard extends React.Component {
         this.updateInterval = (newInterval) => {
             // Clearing previous interval
             clearInterval(this.interval);
-            if(newInterval > 0) this.interval = setInterval(() => fetchMessageCount(), newInterval);
+            if(newInterval > 0) this.interval = setInterval(() => fetchCdrCount(), newInterval);
             this.setState({
                 refreshinterval: newInterval
             })
@@ -40,7 +40,7 @@ class Dashboard extends React.Component {
     }
 
     componentDidMount() {
-        this.interval = setInterval(() => fetchMessageCount(), this.state.refreshinterval);
+        this.interval = setInterval(() => fetchCdrCount(), this.state.refreshinterval);
     }
     componentWillUnmount() {
         clearInterval(this.interval);
@@ -59,16 +59,16 @@ class Dashboard extends React.Component {
     }
 
 
-    getMessageCount() {
+    getCdrCount() {
         var notificationCount = "0", errorCount = "0", warningCount = "0";
-        var messagecount = store.getState().messagecount;
+        var cdrcount = store.getState().cdrcount;
 
-        messagecount.map(function (row) {
-            if (row.messageType === 'Notification') {
+        cdrcount.map(function (row) {
+            if (row.messageType === 'SUCCESS') {
                 notificationCount = row.count;
-            } else if (row.messageType === 'Error') {
+            } else if (row.messageType === 'ERROR') {
                 errorCount = row.count;
-            } else if (row.messageType === 'Warning') {
+            } else if (row.messageType === 'WARNING') {
                 warningCount = row.count;
             }
         })
@@ -106,7 +106,7 @@ class Dashboard extends React.Component {
             ];
         }
 
-        var data =  this.getMessageCount();
+        var data =  this.getCdrCount();
 
         return (
             <Layout>
@@ -118,7 +118,7 @@ class Dashboard extends React.Component {
                     <div className="logo" id="logo">
                         <Link to="/">
                             <img src="/favicon.png" alt="logo" />
-                            {/* <span>NMS Dashboard</span> */}
+                            {/* <span>CDR Dashboard</span> */}
                         </Link>
                     </div>
                     <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}>
@@ -163,7 +163,7 @@ class Dashboard extends React.Component {
                                 <CountCard icon="exclamation-circle" count={data.Error} bgcolor='#f5222d'/>
                             </Col>
                         </Row>
-                        <MessageInfiniteScroll refreshinterval={this.state.refreshinterval} />
+                        <CdrInfiniteScroll refreshinterval={this.state.refreshinterval} />
                     </Content>
                     {/* <Footer>Footer</Footer> */}
                 </Layout>
