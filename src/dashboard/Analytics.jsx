@@ -1,18 +1,21 @@
 import React, { Component } from 'react';
 import { Layout, Menu, Icon, Dropdown } from 'antd';
+import { Card } from 'antd';
 import '../asset/css/custom.css';
 import "antd/dist/antd.css";
 import { Link } from 'react-router-dom';
-import CountCard from '../dashboard/CountCard';
+import PieChart from '../dashboard/PieChart';
 import CdrInfiniteScroll from './CdrInfiniteScroll';
 import { Col, Row } from 'antd';
 import store from "../stores/store.js";
 import { fetchCdrCount } from "../util/APIUtils.js";
+import { fetchAcctUsage } from "../util/APIUtils.js";
 import IntervalSelector from '../dashboard/IntervalSelector';
+import LineChart from './LineChart';
 
 const { Header, Sider, Content } = Layout;
 
-class Dashboard extends React.Component {
+class Analytics extends React.Component {
 
     constructor(props) {
         super(props);
@@ -23,6 +26,7 @@ class Dashboard extends React.Component {
         });
 
         fetchCdrCount();
+        fetchAcctUsage();
         this.state = {
             refreshinterval: this.defaultInterval,
             collapsed: false,
@@ -32,6 +36,7 @@ class Dashboard extends React.Component {
             // Clearing previous interval
             clearInterval(this.interval);
             if (newInterval > 0) this.interval = setInterval(() => fetchCdrCount(), newInterval);
+            if (newInterval > 0) this.interval = setInterval(() => fetchAcctUsage(), newInterval);
             this.setState({
                 refreshinterval: newInterval
             })
@@ -41,7 +46,9 @@ class Dashboard extends React.Component {
 
     componentDidMount() {
         this.interval = setInterval(() => fetchCdrCount(), this.state.refreshinterval);
+        this.interval = setInterval(() => fetchAcctUsage(), this.state.refreshinterval);
     }
+
     componentWillUnmount() {
         clearInterval(this.interval);
     }
@@ -58,25 +65,16 @@ class Dashboard extends React.Component {
         }
     }
 
-
     getCdrCount() {
-        var notificationCount = "0", errorCount = "0", warningCount = "0";
         var cdrcount = store.getState().cdrcount;
-
-        cdrcount.map(function (row) {
-            if (row.messageType === 'SUCCESS') {
-                notificationCount = row.count;
-            } else if (row.messageType === 'ERROR') {
-                errorCount = row.count;
-            } else if (row.messageType === 'WARNING') {
-                warningCount = row.count;
-            }
-        })
-
-        const data = { Notification: notificationCount, Error: errorCount, Warning: warningCount }
-
-        return data;
+        return cdrcount;
     }
+
+    getAcctUsage() {
+        var acctusages = store.getState().acctusages;
+        return acctusages;
+    }
+
 
     render() {
 
@@ -106,7 +104,11 @@ class Dashboard extends React.Component {
             ];
         }
 
-        var data = this.getCdrCount();
+        var cdrcount = this.getCdrCount();
+        var acctusages = this.getAcctUsage();
+
+        console.log(cdrcount)
+        console.log(acctusages)
 
         return (
             <Layout>
@@ -150,18 +152,34 @@ class Dashboard extends React.Component {
                         margin: '24px 16px', padding: 24, background: '#fff',
                     }}
                     >
-                        <Row gutter={8}>
-                            <Col span={8}>
-                                <CountCard icon="bell" count={data.Notification} bgcolor='#52c41a' />
-                            </Col>
-                            <Col span={8}>
-                                <CountCard icon="warning" count={data.Warning} bgcolor='#faad14' />
-                            </Col>
-                            <Col span={8}>
-                                <CountCard icon="exclamation-circle" count={data.Error} bgcolor='#f5222d' />
-                            </Col>
-                        </Row>
-                        <CdrInfiniteScroll refreshinterval={this.state.refreshinterval} />
+                        <div>
+                            <Row>
+                                <Col span={8}>
+                                    <Card
+                                        size="small"
+                                        title="CDR Processing Status"
+                                        extra={<a href="#">More</a>}
+                                        style={{ width: 600, height: 600 }}
+                                    >
+                                        <PieChart cdrcount={cdrcount} />
+                                    </Card>
+                                </Col>
+                                <Col span={8} offset={6}>
+                                    <Card
+                                        size="small"
+                                        title="Account Data Usages"
+                                        extra={<a href="#">More</a>}
+                                        style={{ width: 600, height: 600 }}
+                                    >
+                                        <LineChart acctusages={acctusages} />
+                                    </Card>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col span={8}></Col>
+                                <Col span={8} offset={6}></Col>
+                            </Row>
+                        </div>
                     </Content>
                     {/* <Footer>Footer</Footer> */}
                 </Layout>
@@ -203,4 +221,4 @@ function ProfileDropdownMenu(props) {
     );
 }
 
-export default Dashboard;
+export default Analytics;

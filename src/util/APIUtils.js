@@ -51,6 +51,18 @@ export function fetchCdrs(reqURL){
     })
 }
 
+export function fetchAcctUsage(operatorId=1001) {
+    request({
+        url: API_BASE_URL+"/cdrs/acctusages?operatorId="+operatorId,
+        method: 'GET',
+    }).then(function(acctusages){
+        store.dispatch({
+            type: 'acctusages',
+            acctusages: acctusages
+        });
+    });
+};
+
 export function login(loginRequest) {
     return request({
         url: API_BASE_URL + "/auth/signin",

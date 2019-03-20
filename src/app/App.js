@@ -12,6 +12,7 @@ import NotFound from '../common/NotFound';
 import LoadingIndicator from '../common/LoadingIndicator';
 import PrivateRoute from '../common/PrivateRoute';
 import Dashboard from '../dashboard/Dashboard';
+import Analytics from '../dashboard/Analytics';
 
 import { Layout, notification } from 'antd';
 
@@ -92,6 +93,7 @@ class App extends Component {
                 render={(props) => <Login onLogin={this.handleLogin} {...props} />}></Route>
               <Route path="/signup" component={Signup}></Route>
               <PrivateRoute path="/dashboard" component={Dashboard} currentUser={this.state.currentUser} onLogout={this.handleLogout} />
+              <PrivateRoute path="/analytics" component={Analytics} currentUser={this.state.currentUser} onLogout={this.handleLogout} />
               <Route path="/users/:username" render={(props) => <Profile currentUser={this.state.currentUser} {...props} />}>
               </Route>
               <Route component={NotFound}></Route>
